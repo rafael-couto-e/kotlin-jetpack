@@ -10,9 +10,6 @@ class LoginViewModel: ViewModel() {
     val password = MutableLiveData<String>()
     val error = MutableLiveData<String>()
 
-    val canEnable: Boolean
-        get() = !(login.value.isNullOrEmpty() || password.value.isNullOrEmpty())
-
     private val webService by lazy {
         WebService()
     }
@@ -35,4 +32,6 @@ class LoginViewModel: ViewModel() {
 
         return null
     }
+
+    fun shouldEnable(): Boolean = !(login.value.isNullOrEmpty() || password.value.isNullOrEmpty())
 }
