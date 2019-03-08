@@ -7,10 +7,12 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModelProviders
 import br.eti.rafaelcouto.rcatestjetpack.R
 import br.eti.rafaelcouto.rcatestjetpack.result.ResultActivity
 import br.eti.rafaelcouto.rcatestjetpack.extension.bind
+import br.eti.rafaelcouto.rcatestjetpack.extension.bindTo
 import br.eti.rafaelcouto.rcatestjetpack.extension.withSource
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -39,9 +41,7 @@ class LoginActivity : AppCompatActivity() {
             viewModel.login.value = login
         }
 
-        editText2.bind { password ->
-            viewModel.password.value = password
-        }
+        editText2.bindTo(viewModel.password)
     }
 
     private fun observe() {
