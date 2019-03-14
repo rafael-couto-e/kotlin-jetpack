@@ -7,11 +7,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModelProviders
 import br.eti.rafaelcouto.rcatestjetpack.R
 import br.eti.rafaelcouto.rcatestjetpack.result.ResultActivity
-import br.eti.rafaelcouto.rcatestjetpack.extension.bind
 import br.eti.rafaelcouto.rcatestjetpack.extension.bindTo
 import br.eti.rafaelcouto.rcatestjetpack.extension.withSource
 import kotlinx.android.synthetic.main.activity_login.*
@@ -28,25 +26,31 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-    }
-
-    override fun onResume() {
-        super.onResume()
 
         bindAndObserve()
     }
 
     private fun bind() {
-        editText.bind { login ->
-            viewModel.login.value = login
-        }
-
+        editText.bindTo(viewModel.login)
         editText2.bindTo(viewModel.password)
     }
 
     private fun observe() {
         viewModel.apply {
-            MediatorLiveData<Boolean>()
+            val mediator = MediatorLiveData<Boolean>()
+
+            mediator.withSource(login)
+                .and(password)
+                .mediate(this@LoginActivity) {
+                    mediator.value = shouldEnable()
+                }.andObserve { enabled ->
+                    button.apply {
+                        isEnabled = enabled
+                        alpha = if (enabled) 1F else 0.5F
+                    }
+                }
+
+            /*MediatorLiveData<Boolean>()
                 .withSource(login) {
                     this.value = shouldEnable()
                 }.withSource(password) {
@@ -59,7 +63,7 @@ class LoginActivity : AppCompatActivity() {
                             alpha = if (enabled) 1F else 0.5F
                         }
                     }
-                )
+                )*/
 
             error.observe(this@LoginActivity, Observer { error ->
                 loader.hide()
@@ -83,7 +87,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun bindAndObserve() {
-        bind()
-        observe()
+        this.bind()
+        this.observe()
     }
 }
