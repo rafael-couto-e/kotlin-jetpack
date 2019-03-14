@@ -38,10 +38,11 @@ class LoginActivity : AppCompatActivity() {
     private fun observe() {
         viewModel.apply {
             val mediator = MediatorLiveData<Boolean>()
+            val ctx = this@LoginActivity
 
             mediator.withSource(login)
                 .and(password)
-                .mediate(this@LoginActivity) {
+                .mediate(ctx) {
                     mediator.value = shouldEnable()
                 }.andObserve { enabled ->
                     button.apply {
@@ -56,7 +57,7 @@ class LoginActivity : AppCompatActivity() {
                 }.withSource(password) {
                     this.value = shouldEnable()
                 }.observe(
-                    this@LoginActivity,
+                    ctx,
                     Observer { enabled ->
                         button.apply {
                             isEnabled = enabled
@@ -65,19 +66,19 @@ class LoginActivity : AppCompatActivity() {
                     }
                 )*/
 
-            error.observe(this@LoginActivity, Observer { error ->
+            error.observe(ctx, Observer { error ->
                 loader.hide()
 
-                Toast.makeText(this@LoginActivity, error, Toast.LENGTH_SHORT).show()
+                Toast.makeText(ctx, error, Toast.LENGTH_SHORT).show()
             })
 
             button.setOnClickListener {
                 loader.show()
 
-                login()?.observe(this@LoginActivity, Observer { data ->
+                login()?.observe(ctx, Observer { data ->
                     loader.hide()
 
-                    Intent(this@LoginActivity, ResultActivity::class.java).apply {
+                    Intent(ctx, ResultActivity::class.java).apply {
                         putExtra("userData", data)
                         startActivity(this)
                     }

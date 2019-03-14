@@ -26,6 +26,6 @@ class ResultAdapter(
     }
 
     override fun onBindViewHolder(holder: ResultViewHolder, position: Int) {
-        holder.installment = items[position]
+        holder.item = items[position]
     }
 }

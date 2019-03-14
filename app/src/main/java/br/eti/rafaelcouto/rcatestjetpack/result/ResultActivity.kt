@@ -41,30 +41,37 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun observe() {
-        viewModel.user.observe(this, Observer { user ->
-            name.text = user.name
-            available.text = user.limits?.available
-            limit.text = user.limits?.total
-            used.text = user.limits?.totalDue
+        viewModel.username.observe(this, Observer {
+            name.text = it
+        })
 
-            setupRecyclerView()
+        viewModel.available.observe(this, Observer {
+            available.text = it
+        })
+
+        viewModel.total.observe(this, Observer {
+            limit.text = it
+        })
+
+        viewModel.totalDue.observe(this, Observer {
+            used.text = it
+        })
+
+        viewModel.installments.observe(this, Observer {
+            list.apply {
+                val ctx = this@ResultActivity
+
+                adapter = ResultAdapter(ctx, it)
+                layoutManager = LinearLayoutManager(ctx, RecyclerView.VERTICAL, false)
+                itemAnimator = DefaultItemAnimator()
+
+                adapter?.notifyDataSetChanged()
+            }
         })
     }
 
     private fun fetch() {
-        (intent.extras?.get("userData") as? User)?.let { userData ->
-            this.viewModel.user.value = userData
-        }
-    }
-
-    private fun setupRecyclerView() {
-        list.apply {
-            adapter = ResultAdapter(this@ResultActivity, viewModel.user.value?.installments ?: emptyList())
-            layoutManager = LinearLayoutManager(this@ResultActivity, RecyclerView.VERTICAL, false)
-            itemAnimator = DefaultItemAnimator()
-
-            adapter?.notifyDataSetChanged()
-        }
+        this.viewModel.fetchUser(intent.extras)
     }
 
     private fun observeAndFetch() {
