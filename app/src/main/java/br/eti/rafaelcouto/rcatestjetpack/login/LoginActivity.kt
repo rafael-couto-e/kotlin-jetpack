@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 import br.eti.rafaelcouto.rcatestjetpack.R
 import br.eti.rafaelcouto.rcatestjetpack.result.ResultActivity
 import br.eti.rafaelcouto.rcatestjetpack.extension.bindTo
+import br.eti.rafaelcouto.rcatestjetpack.extension.observe
 import br.eti.rafaelcouto.rcatestjetpack.extension.withSource
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -66,23 +67,23 @@ class LoginActivity : AppCompatActivity() {
                     }
                 )*/
 
-            error.observe(ctx, Observer { error ->
+            error.observe(ctx) { error ->
                 loader.hide()
 
                 Toast.makeText(ctx, error, Toast.LENGTH_SHORT).show()
-            })
+            }
 
             button.setOnClickListener {
                 loader.show()
 
-                login()?.observe(ctx, Observer { data ->
+                login()?.observe(ctx) { data ->
                     loader.hide()
 
                     Intent(ctx, ResultActivity::class.java).apply {
                         putExtra("userData", data)
                         startActivity(this)
                     }
-                })
+                }
             }
         }
     }

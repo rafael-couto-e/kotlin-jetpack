@@ -5,6 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 
+fun <T> LiveData<T>.observe(owner: LifecycleOwner, onChanged: (T) -> Unit) {
+    this.observe(owner, Observer { onChanged(it) })
+}
+
 fun <T, S> MediatorLiveData<T>.withSource(
     source: LiveData<S>,
     onChanged: MediatorLiveData<T>.(S) -> Unit

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import br.eti.rafaelcouto.rcatestjetpack.R
+import br.eti.rafaelcouto.rcatestjetpack.extension.bindTo
 import br.eti.rafaelcouto.rcatestjetpack.model.User
 import br.eti.rafaelcouto.rcatestjetpack.result.recycler.ResultAdapter
 import kotlinx.android.synthetic.main.activity_result.*
@@ -41,33 +42,14 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun observe() {
-        viewModel.username.observe(this, Observer {
-            name.text = it
-        })
+        available.bindTo(viewModel.available)
 
-        viewModel.available.observe(this, Observer {
-            available.text = it
-        })
-
-        viewModel.total.observe(this, Observer {
-            limit.text = it
-        })
-
-        viewModel.totalDue.observe(this, Observer {
-            used.text = it
-        })
-
-        viewModel.installments.observe(this, Observer {
-            list.apply {
-                val ctx = this@ResultActivity
-
-                adapter = ResultAdapter(ctx, it)
-                layoutManager = LinearLayoutManager(ctx, RecyclerView.VERTICAL, false)
-                itemAnimator = DefaultItemAnimator()
-
-                adapter?.notifyDataSetChanged()
-            }
-        })
+        viewModel.apply {
+            name.bindTo(username)
+            limit.bindTo(total)
+            used.bindTo(totalDue)
+            list.bindTo(viewModel.installments) { ResultAdapter(this@ResultActivity, it) }
+        }
     }
 
     private fun fetch() {
